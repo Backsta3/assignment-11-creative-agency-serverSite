@@ -10,7 +10,7 @@ const ObjectId = require('mongodb').ObjectId;
 
 
 const MongoClient = require('mongodb').MongoClient;
-const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.hdbqd.mongodb.net/${process.env.DB_USER}?retryWrites=true&w=majority`;
+const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.d8i4k.mongodb.net/${process.env.DB_USER}?retryWrites=true&w=majority`;
 app.use(bodyParser.json());
 app.use(cors());
 app.use(express.static('services'));
