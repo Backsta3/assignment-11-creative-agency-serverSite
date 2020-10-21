@@ -2,7 +2,6 @@ const express = require('express')
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const fileUpload = require('express-fileupload');
-// const { ObjectId } = require('mongodb');
 const app = express()
 const port = 4200
 require("dotenv").config();
@@ -22,7 +21,6 @@ client.connect(err => {
     const reviewCollection = client.db("assignment11").collection("review");
     const adminCollection = client.db("assignment11").collection("admin");
 
-    // Uploading Services
     app.post("/addService", (req, res) => {
         const file = req.files.file;
         const name = req.body.name;
@@ -42,7 +40,6 @@ client.connect(err => {
             })
     })
 
-    //   Show Services to home
     app.get('/services', (req, res) => {
         servicesCollection.find({})
             .toArray((err, documents) => {
@@ -50,7 +47,6 @@ client.connect(err => {
             })
     })
 
-    // Adding Admin via email
     app.post("/addAdmin", (req, res) => {
         const email = req.body.email;
         adminCollection.insertOne({ email })
@@ -59,7 +55,6 @@ client.connect(err => {
             })
     })
 
-    // Adding Order
     app.post("/addOrder", (req, res) => {
         const file = req.files.file;
         const name = req.body.name;
@@ -82,7 +77,6 @@ client.connect(err => {
             })
     })
 
-    // Showing Order
     app.get('/allOrders', (req, res) => {
         userCollection.find({})
             .toArray((err, documents) => {
@@ -90,8 +84,6 @@ client.connect(err => {
             })
     })
 
-
-    // Making Review
     app.post("/review", (req, res) => {
         const name = req.body.name;
         const desig = req.body.desig;
@@ -103,7 +95,6 @@ client.connect(err => {
             })
     })
 
-    // Get Review Collection
     app.get('/getReview', (req, res) => {
         reviewCollection.find({})
             .toArray((err, documents) => {
@@ -111,7 +102,6 @@ client.connect(err => {
             })
     })
 
-    // Status
     app.patch("/addStatus/:id", (req, res) => {
         const status = req.body.status;
         // console.log(status);
@@ -124,7 +114,6 @@ client.connect(err => {
             })
     })
 
-    // Finding Admin
     app.get('/findAdmin/:email', (req, res) => {
         adminCollection.find({email: req.params.email})
         // console.log(req.params.email)
@@ -133,8 +122,6 @@ client.connect(err => {
             })
     })
 
-    
-    // Using firebase backend controller
     const admin = require('firebase-admin');
     var serviceAccount = require("./fardin-creative-agency-firebase-adminsdk-sxqzu-5323c714ae.json");
     admin.initializeApp({
@@ -142,22 +129,18 @@ client.connect(err => {
         databaseURL: process.env.FIRE_DB
     });
 
-    //   // CRUD এর  READ method (R) //     //
     app.get("/orders", (req, res) => {
         const bearer = req.headers.authorization
         if (bearer && bearer.startsWith('Bearer ')) {
 
             const idToken = bearer.split(' ')[1];
 
-            // idToken comes from the client app
             admin.auth().verifyIdToken(idToken)
                 .then(function (decodedToken) {
                     const tokenEmail = decodedToken.email;
                     const queryEmail = req.query.email;
                     let uid = decodedToken.uid;
-                    // console.log({uid});
 
-                    // // custom verification with email // //
                     if (tokenEmail == queryEmail) {
                         userCollection.find({ email: queryEmail })
                             .toArray((err, documents) => {
@@ -169,7 +152,6 @@ client.connect(err => {
                     }
                 }).catch(function (error) {
                     res.status(401).send("Unauthorized access!!")
-                    // Handle error
                 });
         }
 
@@ -181,7 +163,7 @@ client.connect(err => {
 
 
 app.get('/', (req, res) => {
-    res.send('Hello World!')
+    res.send('Hi! I am Fardin The boss ')
 })
 
 app.listen(process.env.PORT || port)
