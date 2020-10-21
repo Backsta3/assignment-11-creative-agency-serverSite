@@ -18,10 +18,9 @@ app.use(fileUpload());
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
 client.connect(err => {
     const servicesCollection = client.db("assignment11").collection("services");
-    const userServicesCollection = client.db("assignment11").collection("userServices");
+    const userCollection = client.db("assignment11").collection("userServices");
     const reviewCollection = client.db("assignment11").collection("review");
     const adminCollection = client.db("assignment11").collection("admin");
-    const statusCollection = client.db("assignment11").collection("status");
 
     // Uploading Services
     app.post("/addService", (req, res) => {
@@ -77,7 +76,7 @@ client.connect(err => {
             img: Buffer.from(encImg, 'base64')
         };
 
-        userServicesCollection.insertOne({ name, desc, email, service, price, image })
+        userCollection.insertOne({ name, desc, email, service, price, image })
             .then(result => {
                 res.send(result.insertedCount > 0);
             })
@@ -85,7 +84,7 @@ client.connect(err => {
 
     // Showing Order
     app.get('/allOrders', (req, res) => {
-        userServicesCollection.find({})
+        userCollection.find({})
             .toArray((err, documents) => {
                 res.send(documents);
             })
@@ -116,7 +115,7 @@ client.connect(err => {
     app.patch("/addStatus/:id", (req, res) => {
         const status = req.body.status;
         // console.log(status);
-        userServicesCollection.updateOne(
+        userCollection.updateOne(
             { _id: ObjectId(req.params.id) },
             { $set: { status } }
             )
@@ -137,7 +136,7 @@ client.connect(err => {
     
     // Using firebase backend controller
     const admin = require('firebase-admin');
-    var serviceAccount = require("./earn-2018-firebase-adminsdk-7kbrn-e239f4c90e.json");
+    var serviceAccount = require("./fardin-creative-agency-firebase-adminsdk-sxqzu-5323c714ae.json");
     admin.initializeApp({
         credential: admin.credential.cert(serviceAccount),
         databaseURL: process.env.FIRE_DB
@@ -160,7 +159,7 @@ client.connect(err => {
 
                     // // custom verification with email // //
                     if (tokenEmail == queryEmail) {
-                        userServicesCollection.find({ email: queryEmail })
+                        userCollection.find({ email: queryEmail })
                             .toArray((err, documents) => {
                                 res.status(200).send(documents);
                             })
